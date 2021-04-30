@@ -1,35 +1,38 @@
 <template>
-<!--  人物关系图-->
-  <div class="main">
-    <div class="searchBox" style="width: 1100px;">
-      <input placeholder="请输入姓名" v-model="message"></input>
-      <el-button @click="onsubmit()">查询</el-button>
-      <p>{{message}}</p>
-    </div>
-<!--    <p>{{graphNodes}}</p>-->
-<!--      <div v-for="item in graphNodes">{{item}}</div>-->
-<!--    <alert :message="graphNodes"></alert>-->
+  <!--  人物关系图-->
+  <div>
+    <el-form :inline="true" :model="formInline" class="demo-form-inline searchHead">
+      <el-form-item>
+        <el-input
+            placeholder="请输入姓名"
+            v-model="input"
+            clearable>
+        </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">查询</el-button>
+      </el-form-item>
+    </el-form>
     <div id="graph-chart">
-      <div id="main-chart" style="width: 100%; height: 100%;">
-
-      </div>
+      <div id="main-chart" style="width: 100%; height: 100%;"></div>
     </div>
+
   </div>
 </template>
+
 <style>
 #graph-chart {
-  width: 1000px;
-  height: 750px;
+  width: 1200px;
+  height: 730px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
-.searchBox {
-  margin: 0 auto;
-}
-input{
-  height: 35px;
-  padding-left: 5px;
-
+.searchHead {
+  width: 1200px;
+  margin: 0 400px;
 }
 </style>
+
 <script>
 import axios from 'axios';
 let echarts = require("echarts/lib/echarts");
@@ -38,38 +41,28 @@ export default {
   name: "graph-echart",
   data() {
     return {
-      // graphNodes: [],
-      // graphLinks: []
-      graph: {}
+      input: "",
+      graph_data: {},
     };
   },
   updated() {
     this.initChart();
   },
-  // mounted() {
-  //   this.initChart();
-  // },
-  // created() {
-  // },
   methods: {
-    // getData(personName) {
-    //   //http://127.0.0.1:5000/?问号后是参数
-    //   const path = 'http://127.0.0.1:5000/';
-    //   axios.get(path+personName,).then(res=>{
-    //
-    //     this.graphNodes=res.data.nodes;
-    //     this.graphLinks=res.data.links;
-    //     // console.log(this.graphNodes)
-    //     // console.log(this.graphLinks);
-    //     this.initChart();
-    //   })
-    //       .catch((error)=>{
-    //         console.error(error);
-    //       })
-    // },
-    onsubmit() {
-      const personName = this.message
+    onSubmit: function () {
+      console.log(this.input)
+      const personName = this.input;
       this.initChart(personName)
+      // let url = "http://172.26.53.249:5000/"
+      // this.axios
+      //     .get(url + this.input)
+      //     .then(function (reponse) {
+      //       console.log(reponse.data)
+      //     })
+      //     .catch(function (error) { // 请求失败处理
+      //       console.log("查无此人");
+      //       console.log(error);
+      //     });
     },
     initChart: function(personName) {
       this.myChart = echarts.init(document.getElementById('main-chart'));
@@ -95,19 +88,6 @@ export default {
             type: "graph",
             layout: "force",
             symbolSize: 80, //倘若该属性不在link里，则其表示节点的大小；否则即为线两端标记的大小
-            // symbolSize: (value, params) => {
-            //   switch (params.data.category) {
-            //     case 0:
-            //       return 100;
-            //       break;
-            //     case 1:
-            //       return 70;
-            //       break;
-            //     case 2:
-            //       return 70;
-            //       break;
-            //   }
-            // },
             roam: true, //鼠标缩放功能
             // label: {
             //   show: true, //是否显示标签
@@ -118,10 +98,10 @@ export default {
                 name: '0',
                 itemStyle: { //可配置颜色
                   normal: {
-                  borderColor: '#fff',
-                  borderWidth: 1,
-                  shadowBlur: 10,
-                  color: "#A170DD",
+                    borderColor: '#fff',
+                    borderWidth: 1,
+                    shadowBlur: 10,
+                    color: "#A170DD",
                   }
                 }
               }, {
@@ -208,9 +188,11 @@ export default {
           },
         ]
       });
-      const path = 'http://127.0.0.1:5000/';
+      // const path = 'http://127.0.0.1:5000/';
+      const path = 'http://172.26.53.249:5000/';
+
       this.axios.get(path + personName).then(res=>{
-      // this.axios.get(path).then(res=>{
+        // this.axios.get(path).then(res=>{
 
         this.graph=res.data;
         // this.graphNodes=res.data.nodes;
@@ -223,46 +205,12 @@ export default {
             links: this.graph.links
           }],
         })
+      }).catch(function (error) { // 请求失败处理
+          console.log("查无此人");
+          console.log(error);
         });
-
-
-
     },
-
-
-
-
-
-
-
-
-
-
-
-
-    // getData(personName) {
-    //   //http://127.0.0.1:5000/?问号后是参数
-    //   const path = 'http://127.0.0.1:5000/';
-    //   axios.get(path+personName,).then(res=>{
-    //
-    //     this.graphNodes=res.data.nodes;
-    //     this.graphLinks=res.data.links;
-    //     // console.log(this.graphNodes)
-    //     // console.log(this.graphLinks);
-    //     this.initChart();
-    //   })
-    //   .catch((error)=>{
-    //     console.error(error);
-    //   })
-    // },
-    // onsubmit() {
-    //   const personName = this.message
-    //   this.getData(personName)
-    // },
-
-  },
-
-
+  }
 
 }
 </script>

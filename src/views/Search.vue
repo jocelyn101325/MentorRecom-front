@@ -241,7 +241,6 @@ body {
 }
 </style>
 
-
 <script>
 export default {
   methods: {
