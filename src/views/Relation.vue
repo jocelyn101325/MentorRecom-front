@@ -189,7 +189,7 @@ export default {
         ]
       });
       // const path = 'http://127.0.0.1:5000/';
-      const path = 'http://172.26.53.249:5000/';
+      const path = 'http://172.26.204.236:5000/';
 
       this.axios.get(path + personName).then(res=>{
         // this.axios.get(path).then(res=>{
