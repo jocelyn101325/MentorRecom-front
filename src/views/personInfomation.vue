@@ -95,7 +95,7 @@ export default {
                 // label: {
                 //   show: true, //是否显示标签
                 // },
-                focusNodeAdjacency: true, //鼠标移到节点上时突出显示结点以及邻节点和边
+                // focusNodeAdjacency: true, //鼠标移到节点上时突出显示结点以及邻节点和边
                 categories: [
                   {
                     name: '0',
@@ -104,7 +104,7 @@ export default {
                         // borderColor: '#fff',
                         // borderWidth: 1,
                         // shadowBlur: 10,
-                        color: "#A170DD",
+                        color: "#DF4949",
                       }
                     }
                   }, {
@@ -114,7 +114,7 @@ export default {
                         // borderColor: '#fff',
                         // borderWidth: 1,
                         // shadowBlur: 10,
-                        color: "#41B1EF",
+                        color: "#293950",
                       }
                     }
                   }
@@ -144,8 +144,8 @@ export default {
                   }
                 },
                 force: {
-                  repulsion: 1000,
-                  edgeLength: 300,
+                  repulsion: 900,
+                  edgeLength: 200,
                 },
                 data: [],
                 links: [],
@@ -159,7 +159,7 @@ export default {
                   //     color: '#35c2ff'
                   //   }]),
                   // },
-                  shadowBlur: 10
+                  // shadowBlur: 10
                 },
                 lineStyle: {
                   opacity: 0.9,
