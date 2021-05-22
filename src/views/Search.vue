@@ -1,3 +1,5 @@
+<script src="index.js"></script>
+
 <template>
   <div>
 <!--    header-->
@@ -7,58 +9,40 @@
 <!--      </div>-->
 <!--    </div>-->
 
-    <div class="nav">
-      <div class="container">
-        <!--include_edit-->
-        <div class="nav-lf">
-          <p>导师快速分类查询</p>
-          <ul>
-            <li><a href="">金融学</a></li>
-            <li><a href="">计算机</a></li>
-            <li><a href="">英语语言文学</a></li>
-            <li><a href="">法学</a></li>
-          </ul>
-        </div>
-        <div class="nav-rt">
-          <form class="" id="form_name" name="form_name" action="">
-            <select class="select" name="search_type" >
-              <option selected value ="1">所在学校</option>
-              <option  value ="2">招生专业</option>
-              <option  value ="3">研究领域</option>
-              <option  value ="4">导师姓名</option>
-            </select>
-            <div class="search">
-              <input type="text" name="keyword" placeholder="请输入关键字">
-              <button type="button" id="form_submit" name="button">
-                <i class="iconfont icon-sousuo"></i>
-                <span>搜索</span>
-              </button>
-            </div>
-          </form>
-        </div>
+    <div class="container" style="padding-top: 5px">
+
+      <div style="margin: 15px auto;width: 600px;height: 45px;">
+        <el-input placeholder="请输入内容" v-model="searchName" class="input-with-select" @input="update($event)">
+          <el-select v-model="select" slot="prepend" placeholder="请选择">
+            <el-option label="导师" value="1"></el-option>
+            <el-option label="论文" value="2"></el-option>
+            <el-option label="专利" value="3"></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search" @click="onSubmit"></el-button>
+        </el-input>
       </div>
     </div>
 
     <el-table
         :data="tableData"
         border
-        style="width: 882px; margin: 80px auto"
+        style="width: 1000px; margin: 80px auto"
         :header-cell-style="{textAlign:'center'}"
         :cell-style="{textAlign:'center'}">
       <el-table-column
           prop="name"
           label="姓名"
-          width="120">
+          width="130">
       </el-table-column>
       <el-table-column
           prop="orgID"
           label="学校"
-          width="130">
+          width="220">
       </el-table-column>
       <el-table-column
           prop="department"
           label="学院"
-          width="130">
+          width="168">
       </el-table-column>
       <el-table-column
           prop="email"
@@ -68,25 +52,37 @@
       <el-table-column
           prop="sex"
           label="性别"
-          width="120">
+          width="100">
       </el-table-column>
       <el-table-column
           label="操作"
           width="80">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-<!--          <el-button type="text" size="small">编辑</el-button>-->
+          <el-button @click="handleClick(scope.row)" type="text" size="small">查看<i class="el-icon-view el-icon--right"></i></el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-        background
-        layout="prev, pager, next"
-        page-size="15"
-        :total="1000"
-        @current-change="page"
-      style="text-align: center">
-    </el-pagination>
+    <el-row type="flex" justify="center" style="margin-top: -20px">
+      <el-pagination
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :current-page="pageNum"
+          @prev-click="loadTable"
+          @current-change="loadTable"
+          @next-click="loadTable"
+          :total=14980>
+      </el-pagination>
+    </el-row>
+<!--    <el-pagination-->
+<!--        background-->
+<!--        @size-change="handleSizeChange"-->
+<!--        @current-change="handleCurrentChange"-->
+<!--        :current-page="page"-->
+<!--        :page-size="PageSize"-->
+<!--        layout="total,sizes,prev, pager, next, jumper"-->
+<!--        :total="totalCount"-->
+<!--        style="text-align: center">-->
+<!--    </el-pagination>-->
   </div>
 </template>
 
@@ -107,6 +103,14 @@ i,em {
 input,select {
   vertical-align: middle;
 }
+.el-select {
+  width: 130px;
+}
+.input-with-select {
+  width: 250px;
+  background-color: #fff;
+}
+
 a {
   color: #fff;
   text-decoration: none;
@@ -194,6 +198,8 @@ body {
 }
 .nav .nav-rt {
   display: inline-block;
+  margin-left: 50%;
+  transform: translate(-50%, 50%);
 }
 .nav .nav-rt .select {
   width: 110px;
@@ -243,29 +249,105 @@ body {
 
 <script>
 export default {
-  methods: {
-    handleClick(row) {
-      console.log(row);
-    },
-    page(currentPage){
-      // alert(currentPage)
-    }
-  },
-  created() {
-    const _this = this;
-    axios.get('http://localhost:8011/').then(function (resp){
-      _this.tableData = resp.data;
-      _this.total = resp.data.length;
-      // console.log(resp.data.length);
-    })
-  },
   data() {
     return {
+      pageNum: 1,
       total:null,
-      tableData: null,
+      // tableData: null,
       currentPage:1,
-      pagesize:10
+      searchName:'',
+      select: '',
+      // pagesize:12
+      //总数据
+      tableData:[],
+      //默认显示第几页
+      page: 1,
+      //总条数
+      totalCount: 1000,
+      //默认每页显示条数
+      PageSize: 10,
     }
+  },
+  methods: {
+    update(e) {
+      this.$forceUpdate()	// 刷新
+      console.log('input内容：'+e)
+    },
+    onSubmit: function () {
+      console.log('点集搜索：'+this.searchName)
+      const searchName = this.searchName;
+      this.searchByName(searchName)
+    },
+    loadTable(num) {
+      this.pageNum = num;
+      axios.get("http://159.75.27.46:7086/findbypage?page=" + this.pageNum).then(res => {
+        this.tableData = res.data.content;
+      });
+    },
+    searchByName(mentorName) {
+      this.name = mentorName;
+      axios.get("http://159.75.27.46:7086/findbyname?name=" + this.name).then(res => {
+        this.tableData = res.data;
+        console.log(this.tableData)
+      });
+    },
+    // handleClick(row) {
+    //   console.log(row);
+    // }
+    // page(currentPage){
+    //   alert(currentPage)
+    // }
+    //将页码及每页显示条数以参数传递到后台 ======
+    // getData(size,currentpage){
+    //   currentpage = currentpage ? currentpage:this.currentpage;
+    //   size = size ? size:this.PageSize;
+    //   axios.get("http://159.75.27.46:7086/findbypage/",{
+    //     params:{
+    //       page: currentpage
+    //     }}
+    //   ).then(response=>{
+    //     console.log(response)
+    //     this.tableData=response.data.content
+    //     this.totalCount=response.data.totalElements
+    //   }).catch(err =>{
+    //     console.log(err )
+    //   })
+    // },
+    // handleSizeChange(size){
+    //   console.log("当每页条数改变的时候"+size);
+    //   this.PageSize=size;
+    //   this.getData(size,1)
+    //   this.page=1
+    // },
+    // handleCurrentChange(val){
+    //   console.log(this.page)
+    //   this.page = val
+    //   this.getData(this.PageSize,this.page)
+    // },
+    handleClick(rowData){
+      // 获取姓名
+      let name = rowData.name
+      console.log('点击查看获取名字：'+name)
+      this.$router.push({path:'/personInfomation/' + name});
+    }
+  //  ======
+  },
+  created() {
+    this.loadTable(this.pageNum);
+
+    // this.searchByName(this.inputName)
+    // const _this = this;
+    // //http://localhost:8011/
+    // axios.get('http://159.75.27.46:7086/findbypage?page=1').then(function (resp){
+    //   _this.tableData = resp.data.content;
+    //   _this.total = resp.data.content.length;
+    //   // console.log(resp.data.length);
+    // })
+  },
+  computed() {
+    // let search = this.search
+    // console.log(search)
   }
+
 }
 </script>

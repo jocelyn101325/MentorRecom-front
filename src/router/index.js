@@ -7,6 +7,8 @@ import Portrait from "@/views/Portrait";
 // import App from "@/App.vue";
 import Index from "../views/Index";
 import Relation from "@/views/Relation";
+import personInfomation from "../views/personInfomation";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -31,22 +33,27 @@ const routes = [
         path: '/portrait',
         name: '导师画像',
         component: Portrait
+      },
+      {
+        path: '/personInfomation/:name',
+        name: '个人信息',
+        component: personInfomation
       }
     ]
   },
-  {
-    path: '/',
-    name: '党派人物',
-    component: Index,
-    redirect:"/person",
-    children:[
-      {
-        path: '/relation',
-        name: '人物关系',
-        component: Relation
-      }
-    ]
-  }
+  // {
+  //   path: '/',
+  //   name: '党派人物',
+  //   component: Index,
+  //   redirect:"/person",
+  //   children:[
+  //     {
+  //       path: '/relation',
+  //       name: '人物关系',
+  //       component: Relation
+  //     }
+  //   ]
+  // }
 ]
 
 const router = new VueRouter({
