@@ -101,9 +101,9 @@ export default {
                     name: '0',
                     itemStyle: { //可配置颜色
                       normal: {
-                        borderColor: '#fff',
-                        borderWidth: 1,
-                        shadowBlur: 10,
+                        // borderColor: '#fff',
+                        // borderWidth: 1,
+                        // shadowBlur: 10,
                         color: "#A170DD",
                       }
                     }
@@ -111,9 +111,9 @@ export default {
                     name: '1',
                     itemStyle: { //可配置颜色
                       normal: {
-                        borderColor: '#fff',
-                        borderWidth: 1,
-                        shadowBlur: 10,
+                        // borderColor: '#fff',
+                        // borderWidth: 1,
+                        // shadowBlur: 10,
                         color: "#41B1EF",
                       }
                     }
@@ -150,15 +150,15 @@ export default {
                 data: [],
                 links: [],
                 itemStyle: {
-                  normal: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                      offset: 0,
-                      color: '#157eff'
-                    }, {
-                      offset: 1,
-                      color: '#35c2ff'
-                    }]),
-                  },
+                  // normal: {
+                  //   color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                  //     offset: 0,
+                  //     color: '#157eff'
+                  //   }, {
+                  //     offset: 1,
+                  //     color: '#35c2ff'
+                  //   }]),
+                  // },
                   shadowBlur: 10
                 },
                 lineStyle: {
