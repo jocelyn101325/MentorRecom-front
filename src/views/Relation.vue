@@ -53,16 +53,6 @@ export default {
       console.log(this.input)
       const personName = this.input;
       this.initChart(personName)
-      // let url = "http://172.26.53.249:5000/"
-      // this.axios
-      //     .get(url + this.input)
-      //     .then(function (reponse) {
-      //       console.log(reponse.data)
-      //     })
-      //     .catch(function (error) { // 请求失败处理
-      //       console.log("查无此人");
-      //       console.log(error);
-      //     });
     },
     initChart: function(personName) {
       this.myChart = echarts.init(document.getElementById('main-chart'));
@@ -188,7 +178,6 @@ export default {
           },
         ]
       });
-      // const path = 'http://127.0.0.1:5000/';
       const path = 'http://172.26.45.38:5000/';
 
       this.axios.get(path + personName).then(res=>{

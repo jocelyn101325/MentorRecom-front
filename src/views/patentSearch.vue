@@ -5,23 +5,20 @@
     <div class="container" style="padding-top: 5px">
 
       <div style="margin: 15px auto;width: 600px;height: 45px;">
-        <el-input placeholder="请输入姓名" v-model="searchName" class="input-with-select" @input="update($event)" style="width: 280px;">
-        </el-input>
-        <el-input placeholder="请输入研究领域" v-model="searchSex" class="input-with-select" @input="update($event)" style="width: 280px;margin-left: 20px">
-<!--          <el-select v-model="select" slot="prepend" placeholder="请选择" ref="selection">-->
-<!--            <el-option label="导师姓名" value="1"></el-option>-->
-<!--            <el-option label="导师性别" value="2"></el-option>-->
-<!--            <el-option label="所在院校" value="3"></el-option>-->
-<!--          </el-select>-->
+        <el-input placeholder="请输入内容" v-model="searchName" class="input-with-select" @input="update($event)">
+          <el-select v-model="select" slot="prepend" placeholder="请选择国家">
+            <el-option label="中国" value="1"></el-option>
+            <el-option label="美国" value="2"></el-option>
+            <el-option label="巴西" value="3"></el-option>
+          </el-select>
           <el-button slot="append" icon="el-icon-search" @click="onSubmit"></el-button>
         </el-input>
       </div>
     </div>
-
     <el-table
         :data="tableData"
         border
-        style="width: 1200px; margin: 80px auto"
+        style="width: 1000px; margin: 80px auto"
         :header-cell-style="{textAlign:'center'}"
         :cell-style="{textAlign:'center'}">
       <el-table-column
@@ -30,42 +27,37 @@
           width="80">
       </el-table-column>
       <el-table-column
-          prop="name"
-          label="姓名"
-          width="160">
-      </el-table-column>
-      <el-table-column
-          prop="orgID"
-          label="学校"
-          width="250">
-      </el-table-column>
-      <el-table-column
-          prop="department"
-          label="学院"
+          prop="patentType"
+          label="专利类型"
           width="130">
       </el-table-column>
       <el-table-column
-          prop="fieldofStudy"
-          label="研究领域"
-          width="200">
+          prop="patentName"
+          label="专利名称"
+          width="220">
       </el-table-column>
       <el-table-column
-          prop="email"
-          label="邮件地址"
-          width="200">
+          prop="patentCode"
+          label="专利代码"
+          width="160">
       </el-table-column>
       <el-table-column
-          prop="sex"
-          label="性别"
-          width="90">
+          prop="inventor"
+          label="发明人"
+          width="300">
       </el-table-column>
       <el-table-column
-          label="操作"
-          width="80">
-        <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看<i class="el-icon-view el-icon--right"></i></el-button>
-        </template>
+          prop="publicationDate"
+          label="公开日期"
+          width="100">
       </el-table-column>
+<!--      <el-table-column-->
+<!--          label="操作"-->
+<!--          width="80">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button @click="handleClick(scope.row)" type="text" size="small">查看<i class="el-icon-view el-icon&#45;&#45;right"></i></el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-row type="flex" justify="center" style="margin-top: -20px">
       <el-pagination
@@ -98,6 +90,9 @@ i,em {
 }
 input,select {
   vertical-align: middle;
+}
+.el-select {
+  width: 130px;
 }
 .input-with-select {
   width: 250px;
@@ -135,11 +130,30 @@ body {
   width: 1000px;
   margin: 0 auto;
 }
-
+/* header */
+.header {
+  width: 1000px;
+  height: 65px;
+  margin: 0 auto;
+  line-height: 3;
+  padding-top: 10px;
+}
 .header .logo {
   display: inline-block;
 }
-
+/* nav */
+.nav {
+  width: 100%;
+  height: 70px;
+  background: #0066cb;
+}
+.nav .nav-lf {
+  width: 460px;
+  height: 70px;
+  display: inline-block;
+  line-height: 1.7;
+  padding: 10px 5px;
+}
 .nav .nav-lf p {
   width: 65px;
   color: #fff;
@@ -170,7 +184,32 @@ body {
 .nav .nav-lf ul li + li {
   margin-left: 5px;
 }
-
+.nav .nav-rt {
+  display: inline-block;
+  margin-left: 50%;
+  transform: translate(-50%, 50%);
+}
+.nav .nav-rt .select {
+  width: 110px;
+  height: 30px;
+  border: none;
+  float: left;
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 20px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /*background: #fff url('../images/down.png') no-repeat 90px 10px;*/
+  background-size: 13px 13px;
+}
+.nav .nav-rt .search {
+  display: inline-block;
+  width: 410px;
+  height: 30px;
+  margin-left: 10px;
+}
 .nav .nav-rt .search input {
   width: 345px;
   height: 30px;
@@ -204,9 +243,8 @@ export default {
       total:null,
       currentPage:1,
       searchName:'',
-      searchSex:'',
       searchId:'',
-      select: '导师姓名',
+      select: '',
       //总数据
       tableData:[],
       //默认显示第几页
@@ -225,39 +263,21 @@ export default {
     onSubmit: function () {
       console.log('点集搜索：'+this.searchName)
       const searchName = this.searchName;
-      const searchSex = this.searchSex
-      // this.searchByName(searchName)
-      // if(searchSex)
-      this.searchByCondition(searchName,searchSex)
+      this.searchByName(searchName)
     },
     loadTable(num) {
       this.pageNum = num;
-      axios.get("http://159.75.27.46:7086/scholar/findbypage?page=" + this.pageNum).then(res => {
+      axios.get("http://159.75.27.46:7086/patent/EN/findByPage?pageNo=" + this.pageNum).then(res => {
         this.tableData = res.data.content;
       });
     },
     // 表格人名搜索
     searchByName(mentorName) {
       this.name = mentorName;
-      axios.get("http://159.75.27.46:7086/scholar/findbyname?name=" + this.name).then(res => {
+      axios.get("http://159.75.27.46:7086/patent/EN/findbyinventor?inventor=" + this.name).then(res => {
         this.tableData = res.data;
         console.log(this.tableData)
       });
-    },
-    searchByCondition(mentorName, mentorSex){
-      this.name = mentorName;
-      this.sex = mentorSex;
-      if(this.sex)
-        axios.get("http://159.75.27.46:7086/scholar/findByCondition?name=" + this.name+'&fieldofStudy='+this.sex).then(res => {
-          this.tableData = res.data.content;
-          console.log('多条件检索'+ this.sex)
-        });
-      else
-        axios.get("http://159.75.27.46:7086/scholar/findbyname?name=" + this.name).then(res => {
-          this.tableData = res.data;
-          console.log(this.tableData)
-        });
-
     },
     handleClick(rowData){
       // 获取id

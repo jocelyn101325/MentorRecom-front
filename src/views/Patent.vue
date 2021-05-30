@@ -1,63 +1,83 @@
 <script src="index.js"></script>
-
 <template>
   <div>
     <div class="container" style="padding-top: 5px">
-
       <div style="margin: 15px auto;width: 600px;height: 45px;">
-        <el-input placeholder="请输入姓名" v-model="searchName" class="input-with-select" @input="update($event)" style="width: 280px;">
-        </el-input>
-        <el-input placeholder="请输入研究领域" v-model="searchSex" class="input-with-select" @input="update($event)" style="width: 280px;margin-left: 20px">
-<!--          <el-select v-model="select" slot="prepend" placeholder="请选择" ref="selection">-->
-<!--            <el-option label="导师姓名" value="1"></el-option>-->
-<!--            <el-option label="导师性别" value="2"></el-option>-->
-<!--            <el-option label="所在院校" value="3"></el-option>-->
-<!--          </el-select>-->
+        <el-input placeholder="请输入内容" v-model="searchName" class="input-with-select" @input="update($event)">
+          <el-select v-model="select" slot="prepend" placeholder="请选择" ref="selection">
+            <el-option label="US" value="1"></el-option>
+            <el-option label="EN" value="2"></el-option>
+            <el-option label="Brazil" value="3"></el-option>
+          </el-select>
           <el-button slot="append" icon="el-icon-search" @click="onSubmit"></el-button>
         </el-input>
       </div>
     </div>
-
     <el-table
         :data="tableData"
         border
-        style="width: 1200px; margin: 80px auto"
+        style="width: 1500px; margin: 80px auto"
         :header-cell-style="{textAlign:'center'}"
         :cell-style="{textAlign:'center'}">
       <el-table-column
-          prop="id"
-          label="id"
-          width="80">
+          prop="patentType"
+          label="专利类型"
+          width="110">
       </el-table-column>
       <el-table-column
-          prop="name"
-          label="姓名"
-          width="160">
+          prop="patentName"
+          label="专利名称"
+          width="255">
       </el-table-column>
       <el-table-column
-          prop="orgID"
-          label="学校"
-          width="250">
+          prop="patentCode"
+          label="专利号"
+          width="135">
       </el-table-column>
       <el-table-column
-          prop="department"
-          label="学院"
-          width="130">
+          prop="inventor"
+          label="发明人"
+          width="255">
       </el-table-column>
       <el-table-column
-          prop="fieldofStudy"
-          label="研究领域"
+          prop="applicant"
+          label="申请人"
           width="200">
       </el-table-column>
       <el-table-column
-          prop="email"
-          label="邮件地址"
-          width="200">
+          prop="mainClassCode"
+          label="分类号"
+          width="100">
       </el-table-column>
       <el-table-column
-          prop="sex"
-          label="性别"
-          width="90">
+          prop="publicationDate"
+          label="公开日"
+          width="100">
+      </el-table-column>
+      <el-table-column
+          prop="countryOrganization"
+          label="国家"
+          width="50">
+      </el-table-column>
+<!--      <el-table-column-->
+<!--          prop="agency"-->
+<!--          label="专利代理机构"-->
+<!--          width="100">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column-->
+<!--          prop="agent"-->
+<!--          label="代理人"-->
+<!--          width="100">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column-->
+<!--          prop="url"-->
+<!--          label="专利网址"-->
+<!--          width="255">-->
+<!--      </el-table-column>-->
+      <el-table-column
+          prop="patentAbstract"
+          label="摘要"
+          width="210">
       </el-table-column>
       <el-table-column
           label="操作"
@@ -75,13 +95,11 @@
           @prev-click="loadTable"
           @current-change="loadTable"
           @next-click="loadTable"
-          :total=48889>
+          :total=154217>
       </el-pagination>
     </el-row>
-
   </div>
 </template>
-
 <style>
 * {
   margin: 0;
@@ -134,10 +152,6 @@ body {
 .container {
   width: 1000px;
   margin: 0 auto;
-}
-
-.header .logo {
-  display: inline-block;
 }
 
 .nav .nav-lf p {
@@ -204,9 +218,7 @@ export default {
       total:null,
       currentPage:1,
       searchName:'',
-      searchSex:'',
-      searchId:'',
-      select: '导师姓名',
+      select: 'US',
       //总数据
       tableData:[],
       //默认显示第几页
@@ -214,7 +226,7 @@ export default {
       //总条数
       totalCount: 1000,
       //默认每页显示条数
-      // PageSize: 10,
+      PageSize: 10,
     }
   },
   methods: {
@@ -223,51 +235,32 @@ export default {
       console.log('input内容：'+e)
     },
     onSubmit: function () {
-      console.log('点集搜索：'+this.searchName)
+      console.log('点击搜索：'+this.searchName)
       const searchName = this.searchName;
-      const searchSex = this.searchSex
-      // this.searchByName(searchName)
-      // if(searchSex)
-      this.searchByCondition(searchName,searchSex)
+      this.searchByName(searchName,this.$refs.selection.selectedLabel)
     },
     loadTable(num) {
       this.pageNum = num;
-      axios.get("http://159.75.27.46:7086/scholar/findbypage?page=" + this.pageNum).then(res => {
+      axios.get("http://159.75.27.46:7086/patent/US/findByPage?pageNo=" + this.pageNum).then(res => {
         this.tableData = res.data.content;
       });
     },
-    // 表格人名搜索
-    searchByName(mentorName) {
+    searchByName(mentorName,mentorSelect) {
       this.name = mentorName;
-      axios.get("http://159.75.27.46:7086/scholar/findbyname?name=" + this.name).then(res => {
+      this.select = mentorSelect;
+      console.log("name: "+this.name)
+      this.name = this.name.replace(' ','%20')
+      axios.get("http://159.75.27.46:7086/patent/"+this.select+"/findbyinventor?inventor=" + this.name).then(res => {
         this.tableData = res.data;
         console.log(this.tableData)
       });
     },
-    searchByCondition(mentorName, mentorSex){
-      this.name = mentorName;
-      this.sex = mentorSex;
-      if(this.sex)
-        axios.get("http://159.75.27.46:7086/scholar/findByCondition?name=" + this.name+'&fieldofStudy='+this.sex).then(res => {
-          this.tableData = res.data.content;
-          console.log('多条件检索'+ this.sex)
-        });
-      else
-        axios.get("http://159.75.27.46:7086/scholar/findbyname?name=" + this.name).then(res => {
-          this.tableData = res.data;
-          console.log(this.tableData)
-        });
-
-    },
     handleClick(rowData){
-      // 获取id
-      console.log('点击查看获取id：'+ rowData.id)
-      // let id = rowData.id
-      this.$router.push({path:"personInfomation/" + rowData.id});
-      // this.$router.push({name:'personInfomation',params:{mentorId: id}});
-
+      // 获取姓名
+      let name = rowData.name
+      console.log('点击查看获取名字：'+name)
+      this.$router.push({path:'/personInfomation/' + name});
     }
-  //  ======
   },
   created() {
     this.loadTable(this.pageNum);
@@ -276,6 +269,5 @@ export default {
     // let search = this.search
     // console.log(search)
   }
-
 }
 </script>

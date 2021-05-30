@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "echarts": "^5.1.1",
+    "echarts": "^4.9.0",
     "element-ui": "^2.15.1",
     "relation-graph": "^1.1.0",
     "vue": "^2.6.11",

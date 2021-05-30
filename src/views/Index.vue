@@ -67,8 +67,9 @@ export default {
   data() {
     return {
       navList:[
-        {name:'/search', navItem:'综合检索'},
-        {name:'/portrait',navItem:'导师画像'},
+        {name:'/mainsearch', navItem:'首页'},
+        {name:'/search', navItem:'导师检索'},
+        {name:'/patent',navItem:'专利检索'},
       ]
 
     };

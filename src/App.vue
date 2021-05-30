@@ -5,9 +5,7 @@
 </template>
 
 <style>
-/*#app {*/
-/*  background-color: #F2F6FC;*/
-/*}*/
+
 </style>
 
 <script>

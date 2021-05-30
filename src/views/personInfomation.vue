@@ -1,6 +1,5 @@
 <template>
-
-  <div class="metor-info">
+  <div class="mentor-info">
     <el-card class="left">
       <div class="b-info">
         <el-card class="card1">
@@ -8,24 +7,23 @@
             <el-avatar shape="square" :size="130" :src="squareUrl" ></el-avatar>
           </div>
           <div class="basic-info1">
-            <h1><b>{{ metorName }}</b></h1>
-            <p><b>性别：</b>{{mentorDetail[0].sex}}</p>
-            <p><b>职称：</b>{{mentorDetail[0].postRank}}</p>
+            <h1><b>{{ mentorDetail.name }}</b></h1>
+            <p><b>性别：</b>{{mentorDetail.sex}}</p>
+            <p><b>职称：</b>{{mentorDetail.postRank}}</p>
           </div>
           <div class="basic-info2">
-            <span><b>学校：</b>{{mentorDetail[0].orgID}} {{mentorDetail[0].department}}
+            <span><b>学校：</b>{{mentorDetail.orgID}} {{mentorDetail.department}}
             </span>
 
           </div>
         </el-card>
-        <el-card class="card2">
+        <el-card class="card2" style="overflow:auto">
 
-          <p><b>研究领域：</b>{{mentorDetail[0].fieldofStudy}}</p>
-          <p><b>教育背景：</b>{{mentorDetail[0].eduBackg}}</p>
-          <p><b>发表论文：</b>{{mentorDetail[0].papers}}</p>
-          <p><b>发表专利：</b>{{mentorDetail[0].patents}}</p>
+          <p><b>研究领域：</b>{{mentorDetail.fieldofStudy}}</p>
+          <p><b>教育背景：</b>{{mentorDetail.eduBackg}}</p>
+          <p><b>发表论文：</b>{{mentorDetail.papers}}</p>
+          <p><b>发表专利：</b>{{mentorDetail.patents}}</p>
         </el-card>
-
       </div>
     </el-card>
     <el-card class="right">
@@ -47,7 +45,7 @@ export default {
       data() {
         return{
           squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-          metorName:'',
+          mentorId:'',
           mentorDetail:[]
         }
       },
@@ -61,17 +59,17 @@ export default {
       methods: {
         getDetails() {
           //获取当前页面接收到的id
-          this.metorName = this.$route.params && this.$route.params.name;
-          axios.get("http://159.75.27.46:7086/findbyname?name=" + this.metorName).then(res => {
+          this.id = this.$route.params && this.$route.params.id;
+          console.log('获取到的id='+ this.id)
+          axios.get("http://159.75.27.46:7086/scholar/findbyid?id=" + this.id).then(res => {
             this.mentorDetail = res.data;
-            console.log(this.mentorDetail)
-
+            // console.log('返回的'+this.mentorDetail.name)
           });
         },
         initChart: function() {
           this.myChart = echarts.init(document.getElementById('main-chart'));
-          this.mentorName = this.$route.params && this.$route.params.name;
-          console.log(this.metornName)
+          this.mentorId = this.$route.params && this.$route.params.id;
+          console.log(this.mentorId)
           this.myChart.setOption({
             animationDurationUpdate: 1500,
             animationEasingUpdate: "quinticInOut",
@@ -83,6 +81,9 @@ export default {
                 },
                 {
                   name: "1"
+                },
+                {
+                  name: "2"
                 }
               ]
             },
@@ -90,7 +91,7 @@ export default {
               {
                 type: "graph",
                 layout: "force",
-                symbolSize: 80, //倘若该属性不在link里，则其表示节点的大小；否则即为线两端标记的大小
+                symbolSize: 30, //倘若该属性不在link里，则其表示节点的大小；否则即为线两端标记的大小
                 roam: true, //鼠标缩放功能
                 // label: {
                 //   show: true, //是否显示标签
@@ -106,7 +107,8 @@ export default {
                         // shadowBlur: 10,
                         color: "#DF4949",
                       }
-                    }
+                    },
+                    symbolSize: [45, 45]
                   }, {
                     name: '1',
                     itemStyle: { //可配置颜色
@@ -116,8 +118,20 @@ export default {
                         // shadowBlur: 10,
                         color: "#293950",
                       }
-                    }
-                  }
+                    },
+                    symbolSize: [35, 35]
+                  }, {
+                    name: '2',
+                    itemStyle: { //可配置颜色
+                      normal: {
+                        // borderColor: '#fff',
+                        // borderWidth: 1,
+                        // shadowBlur: 10,
+                        color: "#E8B842",
+                      }
+                    },
+                    symbolSize: [35, 35]
+                  },
                 ],
                 edgeSymbol: ["circle", "arrow"], //关系两边的展现形式，也即图中线两端的展现形式。arrow为箭头
                 edgeSymbolSize: [4, 10],
@@ -144,22 +158,13 @@ export default {
                   }
                 },
                 force: {
-                  repulsion: 900,
-                  edgeLength: 200,
+                  repulsion: 400,
+                  edgeLength: 100,
+                  // layoutAnimation : false
                 },
                 data: [],
                 links: [],
                 itemStyle: {
-                  // normal: {
-                  //   color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                  //     offset: 0,
-                  //     color: '#157eff'
-                  //   }, {
-                  //     offset: 1,
-                  //     color: '#35c2ff'
-                  //   }]),
-                  // },
-                  // shadowBlur: 10
                 },
                 lineStyle: {
                   opacity: 0.9,
@@ -169,7 +174,15 @@ export default {
               },
             ]
           });
-          this.axios.get('http://159.75.27.46:7086/scholarnetwork?personname=' + this.mentorName).then(res=>{
+          this.myChart.on('click', function(params){
+            let selectedName = params.name
+            console.log(selectedName)
+            let id = 64427
+            window.location.href="64427";
+            // this.$router.push({path:"personInfomation/" + id});
+          });
+
+          this.axios.get('http://159.75.27.46:7086/scholar/scholarnetwork/findbyid?personid=' + this.mentorId).then(res=>{
             this.graph=res.data;
             console.log(this.graph)
             this.myChart.setOption({

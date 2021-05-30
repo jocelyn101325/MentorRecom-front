@@ -8,16 +8,13 @@ import Portrait from "@/views/Portrait";
 import Index from "../views/Index";
 import Relation from "@/views/Relation";
 import personInfomation from "../views/personInfomation";
-
+import MainSearch from "@/views/MainSearch";
+import patentSearch from "@/views/patentSearch";
+import Patent from "@/views/Patent";
 Vue.use(VueRouter)
 
 const routes = [
-//    新页面 Scholar.vue
-//   {
-//     path: '/scholar',
-//     name: 'Scholar',
-//     component: Scholar
-//   },
+
   {
     path: '/',
     name: '导师推荐',
@@ -25,9 +22,19 @@ const routes = [
     redirect:"/search",
     children:[
       {
+        path: '/mainsearch',
+        name: '首页',
+        component: MainSearch
+      },
+      {
         path: '/search',
-        name: '综合检索',
+        name: '导师检索',
         component: Search
+      },
+      {
+        path: '/patent',
+        name: '专利检索',
+        component: Patent
       },
       {
         path: '/portrait',
@@ -35,7 +42,7 @@ const routes = [
         component: Portrait
       },
       {
-        path: '/personInfomation/:name',
+        path: '/personInfomation/:id',
         name: '个人信息',
         component: personInfomation
       }
